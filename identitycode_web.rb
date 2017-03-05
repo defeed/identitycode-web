@@ -36,4 +36,19 @@ class IdentityCodeWeb < Sinatra::Base
       result: codes
     }.to_json
   end
+
+  get '/validate' do
+    content_type :json
+
+    country = params[:country] || 'ee'
+    code = IdentityCode.validate(country: country, code: params[:code])
+
+    {
+      country: country,
+      valid: code.valid?,
+      sex: code.sex,
+      age: code.age,
+      birth_date: code.birth_date
+    }.to_json
+  end
 end

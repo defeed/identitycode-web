@@ -9,7 +9,7 @@
         padding-top: 20px;
       }
 
-      .jumbotron h2 {
+      .jumbotron h2, .jumbotron h4 {
         font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
       }
 
@@ -21,7 +21,7 @@
 
       @media (min-width: 992px) {
         .jumbotron h2 {
-          font-size: 4.5em;
+          font-size: 3.5em;
         }
       }
 
@@ -35,7 +35,6 @@
           data.sex = $('input[name=sexRadio]:checked').val();
           data.count = $('input[name=countInput]').val();
 
-          console.log(data);
           $.ajax({
             url: '/generate',
             method: 'POST',
@@ -48,8 +47,37 @@
           });
         };
 
+        function validate() {
+          var data = {};
+          data.country = $('input[name=generateCountryRadio]:checked').val();
+          data.code = $('#validateIdentityCode').val();
+
+          $.ajax({
+            url: '/validate',
+            method: 'GET',
+            data: data
+          }).done(function (response) {
+            if (response.valid) {
+              $('#validateValid').removeClass('text-danger').addClass('text-success').html('true');
+              $('#validateSex').html(response.sex);
+              $('#validateAge').html(response.age);
+              $('#validateBirthDate').html(response.birth_date);
+            } else {
+              $('#validateValid').removeClass('text-success').addClass('text-danger').html('false');
+              $('#validateSex').html('-');
+              $('#validateAge').html('-');
+              $('#validateBirthDate').html('-');
+            }
+          });
+        }
+
         $('#submitGenerate').click(function() {
           generate();
+          return false;
+        });
+
+        $('#submitValidate').click(function() {
+          validate();
           return false;
         });
 
@@ -64,7 +92,7 @@
           .jumbotron
             %form.form-horizontal#form-generate
               .row
-                .col-xs-6
+                .col-xs-12.col-md-6
                   .row
                     .col-xs-6
                       .radio
@@ -89,7 +117,7 @@
                           %input{ type: :radio, name: 'sexRadio', id: 'sexRadioF', value: 'f' }
                             Female
 
-                .col-xs-6
+                .col-xs-12.col-md-6
                   .row
                     .form-group
                       .col-xs-6
@@ -101,11 +129,55 @@
                               Safe age
                     .form-group
                       .col-xs-12
-                        %input.btn.btn-primary.btn-block.form-control{ type: :button, value: 'Generate', id: 'submitGenerate' }
+                        %input.btn.btn-primary.btn-block.form-control{ type: :submit, value: 'Generate', id: 'submitGenerate' }
 
             #generateResult.text-center
 
         .col-xs-12.col-md-6
+          .jumbotron
+            %form.form-horizontal#form-validate
+              .row
+                .col-xs-6
+                  .radio
+                    %label
+                      %input{ type: :radio, name: 'validateCountryRadio', id: 'validateCountryRadioEE', value: 'ee', checked: true }
+                        Estonia
+                  .radio
+                    %label
+                      %input{ type: :radio, name: 'validateCountryRadio', id: 'validateCountryRadioLV', value: 'lv' }
+                        Latvia
+                  .radio
+                    %label
+                      %input{ type: :radio, name: 'validateCountryRadio', id: 'validateCountryRadioPL', value: 'pl' }
+                        Poland
+                .col-xs-6
+                  .form-group
+                    .col-xs-12
+                      %input.form-control{ type: :text, id: 'validateIdentityCode', placeholder: '38312203720' }
+                  .form-group
+                    .col-xs-12
+                      %input.btn.btn-primary.btn-block.form-control{ type: :submit, value: 'Validate', id: 'submitValidate' }
+
+            #validateResult
+              .row
+                .col-xs-6
+                  %h4
+                    Valid:
+                    %span#validateValid
+                .col-xs-6
+                  %h4
+                    Sex:
+                    %span#validateSex
+              .row
+                .col-xs-6
+                  %h4
+                    Age:
+                    %span#validateAge
+                .col-xs-6
+                  %h4
+                    DOB:
+                    %span#validateBirthDate
+
       %footer
         %small.text-muted
           Made with ❤️ by
