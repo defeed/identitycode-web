@@ -23,6 +23,7 @@ class IdentityCodeWeb < Sinatra::Base
       count: count,
       country: params[:country] || 'ee',
       safe_age: params[:safe_age].nil? ? false : true,
+      separator: params[:separator].nil? ? false : true,
       sex: params[:sex]
     }
 
