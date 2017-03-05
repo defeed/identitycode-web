@@ -3,6 +3,7 @@ GEM
   specs:
     haml (4.0.7)
       tilt
+    identitycode (0.2.4)
     kgio (2.11.0)
     rack (1.6.5)
     rack-protection (1.5.3)
@@ -22,6 +23,7 @@ PLATFORMS
 
 DEPENDENCIES
   haml
+  identitycode
   sinatra
   unicorn
 

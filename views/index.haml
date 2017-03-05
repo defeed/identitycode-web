@@ -1,14 +1,110 @@
 %html
   %head
     %title Identity Code as a Service
-    %link{href: "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css", rel: "stylesheet", integrity: "sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u", crossorigin: "anonymous"}
+    %link{ href: "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css", rel: "stylesheet", integrity: "sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u", crossorigin: "anonymous" }
+    %script{ src: "https://code.jquery.com/jquery-3.1.1.min.js", integrity: "sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=", crossorigin: "anonymous" }
+
     :css
       .container {
         padding-top: 20px;
       }
 
+      .jumbotron h2 {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      }
+
+      @media (min-width: 768px) {
+        .jumbotron h2 {
+          font-size: 3em;
+        }
+      }
+
+      @media (min-width: 992px) {
+        .jumbotron h2 {
+          font-size: 4.5em;
+        }
+      }
+
+    :javascript
+      $(document).ready(function() {
+        function generate() {
+          var data = {};
+
+          data.country = $('input[name=generateCountryRadio]:checked').val();
+          data.safe_age = $('input[name=safeAgeCheckbox]').is(':checked');
+          data.sex = $('input[name=sexRadio]:checked').val();
+          data.count = $('input[name=countInput]').val();
+
+          console.log(data);
+          $.ajax({
+            url: '/generate',
+            method: 'POST',
+            data: data
+          }).done(function (response) {
+            $('#generateResult').html('');
+            response.result.forEach(function (res) {
+              $('#generateResult').append('<h2>' + res + '</h2>');
+            });
+          });
+        };
+
+        $('#submitGenerate').click(function() {
+          generate();
+          return false;
+        });
+
+        generate();
+      });
+
   %body
     .container
+      %h1 Identity Code as a Service
       .row
-        .col-xs-12
-          Hello, World!
+        .col-xs-12.col-md-6
+          .jumbotron
+            %form.form-horizontal#form-generate
+              .row
+                .col-xs-6
+                  .row
+                    .col-xs-6
+                      .radio
+                        %label
+                          %input{ type: :radio, name: 'generateCountryRadio', id: 'generateCountryRadioEE', value: 'ee', checked: true }
+                            Estonia
+                      .radio
+                        %label
+                          %input{ type: :radio, name: 'generateCountryRadio', id: 'generateCountryRadioLV', value: 'lv' }
+                            Latvia
+                      .radio
+                        %label
+                          %input{ type: :radio, name: 'generateCountryRadio', id: 'generateCountryRadioPL', value: 'pl' }
+                            Poland
+                    .col-xs-6
+                      .radio
+                        %label
+                          %input{ type: :radio, name: 'sexRadio', id: 'sexRadioM', value: 'm' }
+                            Male
+                      .radio
+                        %label
+                          %input{ type: :radio, name: 'sexRadio', id: 'sexRadioF', value: 'f' }
+                            Female
+
+                .col-xs-6
+                  .row
+                    .form-group
+                      .col-xs-6
+                        %input.form-control{ type: :number, name: 'countInput', value: 5 }
+                      .col-xs-6
+                        .checkbox
+                          %label
+                            %input{ type: :checkbox, name: 'safeAgeCheckbox', id: 'safeAge', value: 'true', checked: true }
+                              Safe age
+                    .form-group
+                      .col-xs-12
+                        %input.btn.btn-primary.btn-block.form-control{ type: :button, value: 'Generate', id: 'submitGenerate' }
+
+            #generateResult.text-center
+
+        .col-xs-12.col-md-6
+      %footer
+        %small.text-muted Made with ❤️ by Artem Pakk
