@@ -22,8 +22,8 @@ class IdentityCodeWeb < Sinatra::Base
     opts = {
       count: count,
       country: params[:country] || 'ee',
-      safe_age: params[:safe_age].nil? ? false : true,
-      separator: params[:separator].nil? ? false : true,
+      safe_age: true?(params[:safe_age]),
+      separator: true?(params[:separator]),
       sex: params[:sex]
     }
 
@@ -51,5 +51,11 @@ class IdentityCodeWeb < Sinatra::Base
       age: code.age,
       birth_date: code.birth_date
     }.to_json
+  end
+
+  helpers do
+    def true?(thing)
+      thing.to_s == 'true'
+    end
   end
 end
