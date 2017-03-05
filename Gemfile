@@ -1,7 +1,8 @@
 source 'https://rubygems.org'
+ruby '2.3.0'
 
 gem 'sinatra'
-gem 'unicorn'
+gem 'thin'
 gem 'haml'
 
 gem 'identitycode'
